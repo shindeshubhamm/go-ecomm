@@ -1,4 +1,4 @@
-module github.com/shindeshubhamm/ecomm
+module github.com/shindeshubhamm/go-ecomm
 
 go 1.25.4
 

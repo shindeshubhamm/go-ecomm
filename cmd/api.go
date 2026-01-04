@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	handlers "github.com/shindeshubhamm/go-ecomm/internal/transport/http"
 )
 
 type application struct {
@@ -22,9 +23,12 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Recoverer)                 // important for recovery
 	r.Use(middleware.Timeout(60 * time.Second)) // important for request timeout
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("root."))
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("all good."))
 	})
+
+	productHandler := handlers.NewProductHandler(nil)
+	r.Get("/products", productHandler.ListProducts)
 
 	return r
 }
