@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	handlers "github.com/shindeshubhamm/go-ecomm/internal/transport/http"
+	"github.com/shindeshubhamm/go-ecomm/internal/service"
+	"github.com/shindeshubhamm/go-ecomm/internal/transport/http/handlers"
 )
 
 type application struct {
@@ -27,8 +28,16 @@ func (app *application) mount() http.Handler {
 		w.Write([]byte("all good."))
 	})
 
-	productHandler := handlers.NewProductHandler(nil)
-	r.Get("/products", productHandler.ListProducts)
+	r.Route("/products", func(r chi.Router) {
+		productService := service.NewProductService()
+		productHandler := handlers.NewProductHandler(productService)
+		r.Get("/", productHandler.ListProducts)
+	})
+
+	// r.Route("/orders", func(r chi.Router) {
+	// 	orderHandler := handlers.NewOrderHandler(nil)
+	// 	r.Get("/", orderHandler.ListOrders)
+	// })
 
 	return r
 }
