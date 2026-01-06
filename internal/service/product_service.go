@@ -1,29 +1,29 @@
 package service
 
-import "context"
+import (
+	"context"
 
-type Product struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
+	repository "github.com/shindeshubhamm/go-ecomm/internal/adapters/postgresql/sqlc"
+)
 
 type ProductService interface {
-	ListProducts(ctx context.Context) ([]Product, error)
+	ListProducts(ctx context.Context) ([]repository.Product, error)
 }
 
 type svc struct {
-	// db *sql.DB
+	repo repository.Querier
 }
 
-func NewProductService() ProductService {
-	return &svc{}
+func NewProductService(repo repository.Querier) ProductService {
+	return &svc{
+		repo: repo,
+	}
 }
 
-func (s *svc) ListProducts(ctx context.Context) ([]Product, error) {
-	return []Product{
-		{
-			ID:   "1",
-			Name: "Product 1",
-		},
-	}, nil
+func (s *svc) ListProducts(ctx context.Context) ([]repository.Product, error) {
+	products, err := s.repo.ListProducts(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }
