@@ -3,11 +3,13 @@ package service
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	repository "github.com/shindeshubhamm/go-ecomm/internal/adapters/postgresql/sqlc"
 )
 
 type ProductService interface {
 	ListProducts(ctx context.Context) ([]repository.Product, error)
+	GetProductById(ctx context.Context, id pgtype.UUID) (repository.Product, error)
 }
 
 type svc struct {
@@ -26,4 +28,12 @@ func (s *svc) ListProducts(ctx context.Context) ([]repository.Product, error) {
 		return nil, err
 	}
 	return products, nil
+}
+
+func (s *svc) GetProductById(ctx context.Context, id pgtype.UUID) (repository.Product, error) {
+	product, err := s.repo.FindProductById(ctx, id)
+	if err != nil {
+		return repository.Product{}, err
+	}
+	return product, nil
 }
