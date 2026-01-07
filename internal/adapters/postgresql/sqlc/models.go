@@ -8,6 +8,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Category struct {
+	ID        pgtype.UUID      `json:"id"`
+	Name      string           `json:"name"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+}
+
 type Product struct {
 	ID           pgtype.UUID      `json:"id"`
 	Name         string           `json:"name"`
@@ -15,4 +22,5 @@ type Product struct {
 	Quantity     int32            `json:"quantity"`
 	CreatedAt    pgtype.Timestamp `json:"created_at"`
 	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	CategoryID   pgtype.UUID      `json:"category_id"`
 }

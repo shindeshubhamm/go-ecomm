@@ -12,7 +12,7 @@ import (
 )
 
 const findProductById = `-- name: FindProductById :one
-SELECT id, name, price_in_cents, quantity, created_at, updated_at
+SELECT id, name, price_in_cents, quantity, created_at, updated_at, category_id
 FROM products
 WHERE id = $1
 LIMIT 1
@@ -28,12 +28,13 @@ func (q *Queries) FindProductById(ctx context.Context, id pgtype.UUID) (Product,
 		&i.Quantity,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.CategoryID,
 	)
 	return i, err
 }
 
 const listProducts = `-- name: ListProducts :many
-SELECT id, name, price_in_cents, quantity, created_at, updated_at
+SELECT id, name, price_in_cents, quantity, created_at, updated_at, category_id
 FROM products
 ORDER BY name ASC
 `
@@ -54,6 +55,7 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 			&i.Quantity,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.CategoryID,
 		); err != nil {
 			return nil, err
 		}
