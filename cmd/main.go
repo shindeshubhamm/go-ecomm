@@ -15,7 +15,7 @@ func main() {
 	cfg := config{
 		addr: ":8080",
 		db: dbConfig{
-			dsn: env.GetEnv("GOOSE_DBSTRING", ""), //, "postgres://postgres:postgres@localhost:5432/ecomm"),
+			dsn: env.GetEnv("GOOSE_DBSTRING", "postgres://postgres:postgres@localhost:5432/ecomm"),
 		},
 	}
 
