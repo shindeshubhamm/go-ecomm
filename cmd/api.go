@@ -11,6 +11,7 @@ import (
 	repository "github.com/shindeshubhamm/go-ecomm/internal/adapters/postgresql/sqlc"
 	"github.com/shindeshubhamm/go-ecomm/internal/service"
 	"github.com/shindeshubhamm/go-ecomm/internal/transport/http/handlers"
+	"github.com/shindeshubhamm/go-ecomm/internal/transport/http/json"
 )
 
 type application struct {
@@ -28,7 +29,7 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Timeout(60 * time.Second)) // important for request timeout
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("all good."))
+		json.WriteJSON(w, http.StatusOK, "all good.")
 	})
 
 	repo := repository.New(app.db)

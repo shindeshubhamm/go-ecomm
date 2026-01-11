@@ -25,10 +25,10 @@ func (h *productHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := h.service.ListProducts(r.Context())
 	if err != nil {
 		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		json.WriteError(w, http.StatusInternalServerError, "Failed to fetch products")
 		return
 	}
-	json.WriteJSON(w, http.StatusOK, map[string]interface{}{"products": products})
+	json.WriteJSON(w, http.StatusOK, products)
 }
 
 func (h *productHandler) GetProductById(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +36,7 @@ func (h *productHandler) GetProductById(w http.ResponseWriter, r *http.Request) 
 
 	u, err := uuid.Parse(idStr)
 	if err != nil {
-		http.Error(w, "invalid product id", http.StatusBadRequest)
+		json.WriteError(w, http.StatusBadRequest, "Failed to parse product id")
 		return
 	}
 
@@ -44,9 +44,12 @@ func (h *productHandler) GetProductById(w http.ResponseWriter, r *http.Request) 
 
 	product, err := h.service.GetProductById(r.Context(), id)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err.Error() == "not found" {
+			json.WriteError(w, http.StatusNotFound, "Product not found")
+			return
+		}
+		json.WriteError(w, http.StatusInternalServerError, "Failed to fetch product")
 		return
 	}
-	json.WriteJSON(w, http.StatusOK, map[string]interface{}{"product": product})
+	json.WriteJSON(w, http.StatusOK, product)
 }

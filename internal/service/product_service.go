@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	repository "github.com/shindeshubhamm/go-ecomm/internal/adapters/postgresql/sqlc"
 )
@@ -33,6 +35,9 @@ func (s *productService) ListProducts(ctx context.Context) ([]repository.Product
 func (s *productService) GetProductById(ctx context.Context, id pgtype.UUID) (repository.Product, error) {
 	product, err := s.repo.FindProductById(ctx, id)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return repository.Product{}, errors.New("not found")
+		}
 		return repository.Product{}, err
 	}
 	return product, nil

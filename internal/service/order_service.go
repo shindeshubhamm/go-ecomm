@@ -36,7 +36,7 @@ func (s *orderSvc) GetOrderById(ctx context.Context, orderId pgtype.UUID) (repos
 	order, err := s.repo.FindOrderById(ctx, orderId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return repository.Order{}, errors.New("order not found")
+			return repository.Order{}, errors.New("not found")
 		}
 		return repository.Order{}, err
 	}

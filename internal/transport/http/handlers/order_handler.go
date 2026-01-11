@@ -23,7 +23,8 @@ func NewOrderHandler(svc service.OrderService) *orderHandler {
 func (h *orderHandler) ListOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := h.service.ListOrders(r.Context())
 	if err != nil {
-		http.Error(w, "Failed to fetch orders", http.StatusInternalServerError)
+		json.WriteError(w, http.StatusInternalServerError, "Failed to fetch orders")
+		return
 	}
 
 	json.WriteJSON(w, http.StatusOK, orders)
@@ -34,7 +35,7 @@ func (h *orderHandler) GetOrderById(w http.ResponseWriter, r *http.Request) {
 
 	u, err := uuid.Parse(idStr)
 	if err != nil {
-		http.Error(w, "Failed to parse id", http.StatusBadRequest)
+		json.WriteError(w, http.StatusBadRequest, "Failed to parse id")
 		return
 	}
 
@@ -42,7 +43,11 @@ func (h *orderHandler) GetOrderById(w http.ResponseWriter, r *http.Request) {
 	order, err := h.service.GetOrderById(r.Context(), id)
 
 	if err != nil {
-		http.Error(w, "Failed to fetch order", http.StatusInternalServerError)
+		if err.Error() == "not found" {
+			json.WriteError(w, http.StatusNotFound, "Order not found")
+			return
+		}
+		json.WriteError(w, http.StatusInternalServerError, "Failed to fetch order")
 		return
 	}
 
