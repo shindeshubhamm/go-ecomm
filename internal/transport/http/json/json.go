@@ -10,9 +10,9 @@ type Error struct {
 }
 
 type Response struct {
-	Status int   `json:"status"`
-	Error  Error `json:"error,omitempty"`
-	Data   any   `json:"data,omitempty"`
+	Status int    `json:"status"`
+	Error  *Error `json:"error,omitempty"`
+	Data   any    `json:"data,omitempty"`
 }
 
 func WriteJSON(w http.ResponseWriter, status int, data any) error {
@@ -29,7 +29,7 @@ func WriteError(w http.ResponseWriter, status int, message string) error {
 	w.WriteHeader(status)
 	return json.NewEncoder(w).Encode(Response{
 		Status: status,
-		Error: Error{
+		Error: &Error{
 			Message: message,
 		},
 	})
