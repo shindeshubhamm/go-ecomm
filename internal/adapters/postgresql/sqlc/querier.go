@@ -11,7 +11,9 @@ import (
 )
 
 type Querier interface {
+	FindOrderById(ctx context.Context, id pgtype.UUID) (Order, error)
 	FindProductById(ctx context.Context, id pgtype.UUID) (Product, error)
+	ListOrders(ctx context.Context) ([]Order, error)
 	ListProducts(ctx context.Context) ([]Product, error)
 }
 

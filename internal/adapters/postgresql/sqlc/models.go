@@ -15,6 +15,22 @@ type Category struct {
 	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }
 
+type Order struct {
+	ID         pgtype.UUID      `json:"id"`
+	CustomerID pgtype.UUID      `json:"customer_id"`
+	Status     string           `json:"status"`
+	CreatedAt  pgtype.Timestamp `json:"created_at"`
+	UpdatedAt  pgtype.Timestamp `json:"updated_at"`
+}
+
+type OrderItem struct {
+	ID           pgtype.UUID `json:"id"`
+	OrderID      pgtype.UUID `json:"order_id"`
+	ProductID    pgtype.UUID `json:"product_id"`
+	Quantity     int32       `json:"quantity"`
+	PriceInCents int32       `json:"price_in_cents"`
+}
+
 type Product struct {
 	ID           pgtype.UUID      `json:"id"`
 	Name         string           `json:"name"`

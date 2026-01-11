@@ -39,10 +39,12 @@ func (app *application) mount() http.Handler {
 		r.Get("/{id}", productHandler.GetProductById)
 	})
 
-	// r.Route("/orders", func(r chi.Router) {
-	// 	orderHandler := handlers.NewOrderHandler(nil)
-	// 	r.Get("/", orderHandler.ListOrders)
-	// })
+	r.Route("/orders", func(r chi.Router) {
+		orderService := service.NewOrderService(repo)
+		orderHandler := handlers.NewOrderHandler(orderService)
+		r.Get("/", orderHandler.ListOrders)
+		r.Get("/{id}", orderHandler.GetOrderById)
+	})
 
 	return r
 }

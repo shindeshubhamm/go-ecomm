@@ -11,6 +11,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const findOrderById = `-- name: FindOrderById :one
+SELECT id, customer_id, status, created_at, updated_at
+FROM orders
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindOrderById(ctx context.Context, id pgtype.UUID) (Order, error) {
+	row := q.db.QueryRow(ctx, findOrderById, id)
+	var i Order
+	err := row.Scan(
+		&i.ID,
+		&i.CustomerID,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const findProductById = `-- name: FindProductById :one
 SELECT id, name, price_in_cents, quantity, created_at, updated_at, category_id
 FROM products
@@ -31,6 +51,37 @@ func (q *Queries) FindProductById(ctx context.Context, id pgtype.UUID) (Product,
 		&i.CategoryID,
 	)
 	return i, err
+}
+
+const listOrders = `-- name: ListOrders :many
+SELECT id, customer_id, status, created_at, updated_at
+FROM orders
+`
+
+func (q *Queries) ListOrders(ctx context.Context) ([]Order, error) {
+	rows, err := q.db.Query(ctx, listOrders)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Order
+	for rows.Next() {
+		var i Order
+		if err := rows.Scan(
+			&i.ID,
+			&i.CustomerID,
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listProducts = `-- name: ListProducts :many
